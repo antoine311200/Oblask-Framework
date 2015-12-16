@@ -40,7 +40,7 @@ class Playlist {
     this.sounds[this.sounds.length] = sound;
   }
 
-  remove(index: string) {
+  remove(index: number) {
     delete this.sounds[index];
   }
 }
