@@ -42,7 +42,7 @@ myPlaylist.play(0);
 
 //If left click is pressed the sound at index 0 is paused
 if(Sup.Input.wasMouseButtonJustPressed(0)) {
-   myPlaylist.paused(0);
+   myPlaylist.pause(0);
 }
 ```
 
