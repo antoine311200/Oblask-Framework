@@ -83,7 +83,7 @@ myPlaylist.add(sound);
 ```
 
 ###remove(index: number)
-For the delete one sound. 
+To remove one sound. 
 **WARNING :** If you delete one index be careful to not use it again. (Do yet fix)
 
 ```typescript
