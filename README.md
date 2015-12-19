@@ -1,7 +1,7 @@
 # Oblask-API-for-Superpowers
 This is my API to develop projects on Superpowers with many classes which allow to have a better code (create a good UI, playlist management...)
 
- # Audio
+# Audio
 This namespace allows to do some actions related to the **Audio**.
 ## Playlist
 It's a class to create and manage playlist, you can use it very easily.
@@ -85,3 +85,10 @@ myPlaylist.add(sound);
 ###remove(index: number)
 For the delete one sound. 
 **WARNING :** If you delete one index be careful to not use it again. (Do yet fix)
+
+```typescript
+//Initialization...
+
+//Remove the sound at index 0
+myPlaylist.remove(0);
+```
