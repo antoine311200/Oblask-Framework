@@ -92,3 +92,13 @@ To remove one sound.
 //Remove the sound at index 0
 myPlaylist.remove(0);
 ```
+
+###removeAll()
+In order to remove all the sounds in your variable.
+
+```typescript
+//...
+
+//Remove all sounds
+myPlaylist.removeAll();
+```
