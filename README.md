@@ -1,5 +1,5 @@
 # Oblask-API-for-Superpowers
-This is my API to develop projects on Superpowers with many classes which allow to have a better code (create a good UI, playlist management...)
+This is my API to develop projects on Superpowers with many classes which allows to have a better code (create a great UI, playlist management...)
 
 # Audio
 This namespace allows to do some actions related to the **Audio**.
