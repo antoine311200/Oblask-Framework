@@ -2,18 +2,36 @@ namespace Oblask {
   export namespace Audio {
     export class Playlist {
   
+      private paths: string[];
+      private backup: any[];
+    
       private sounds: Sup.Audio.SoundPlayer[];
+      private timer = 0;
+      private actions = ["play", "playAll", "pause", "stop", "add", "replace", "remove", "removeAll"];
+      private allowMultiple: boolean;
+      private canLoop: boolean;
+    
 
-      constructor(sounds: Sup.Audio.SoundPlayer[]) {
-        this.sounds = sounds;
+      constructor(sounds: string[], allowMultiple?: boolean) {
+        this.paths = sounds;
+        this.sounds = [];
+        
+        this.allowMultiple = allowMultiple || true;
+        this.canLoop = true;
+        
+        let exist = this.checkExistSound();
+        
+        for(let path in this.paths) {
+          this.sounds.push(new Sup.Audio.SoundPlayer(this.paths[path]));
+        }
 
         Sup.log(this.sounds);
       }
 
-      play(index: any, replay?: boolean) {
+      play(index: any, loop?: boolean) {
         if(typeof index == "number") {
           for(let sound in this.sounds) {
-            if(!replay) {
+            if(!loop) {
               if(sound != index) {
                 if(this.sounds[sound] != null) this.sounds[sound].stop();
                 else Sup.log("Index error: index is empty");
@@ -26,11 +44,13 @@ namespace Oblask {
           }
           if(this.sounds[index] != null) this.sounds[index].play();
           else Sup.log("Index error: index is empty");
+          
+          this.setLoop(index);
         }
         else {
           for(let sound in this.sounds) {
             for(let i in index) {
-              if(!replay) {
+              if(!loop) {
                 if(sound != index[i]) {
                   if(this.sounds[index[i]] != null) this.sounds[index[i]].stop();
                   else Sup.log("Index error: index is empty");
@@ -52,12 +72,17 @@ namespace Oblask {
     
       playAll() {
         let list = [];
-        for(let sound in this.sounds) list.push(sound);
+        for(let sound in this.sounds) if(this.sounds[sound] != null) list.push(sound);
         this.play(list, true);
       }
 
       stop(index?: number) {
         let i = index;
+        
+        if(!this.isPlaying()) {
+          return;
+        }
+           
         if(i != null) {
           if(this.sounds[i] != null) this.sounds[index].stop();
           else Sup.log("Index error: index is empty");
@@ -84,18 +109,60 @@ namespace Oblask {
         }
       }
 
-      add(sound: Sup.Audio.SoundPlayer) {
-        this.sounds[this.sounds.length] = sound;
+      add(sound: string) {
+        for(let path in this.paths) {
+          if(this.paths[path] === sound) {
+            
+            Sup.log("Warning: this sound already exists in this playlist");
+          }
+        }
+        this.paths.push(sound);
+        this.sounds.push(new Sup.Audio.SoundPlayer(sound));
+      }
+    
+      replace(sound: string, index: number) {
+        if(this.sounds[index] != null) {
+          for(let s in this.sounds) {
+            if(this.paths[s] === sound) {
+              Sup.log("Warning: this sound already exists in this playlist");
+            }
+          }
+          this.paths[index] = sound;
+          this.sounds[index] = new Sup.Audio.SoundPlayer(sound);
+        }
+        else {
+          for(let i = 0; i <= index; i++) {
+            if(i < index) {
+              if(this.sounds[i] == null) {
+                this.sounds[index] = null;
+              }
+            }
+            else if(i == index) {
+              this.paths[index] = sound;
+              this.sounds[index] = new Sup.Audio.SoundPlayer(sound);
+            }
+          }
+        }
       }
 
       remove(index: string) {
         delete this.sounds[index];
       }
 
-      isPlaying(index?: number) {
+      isPlaying(index?: any) {
         if(index != null) {
-          if(this.sounds[index].isPlaying()) return true;
-          else return false;
+          if(typeof index == "number") {
+            if(this.sounds[index].isPlaying()) return true;
+            else return false;
+          }
+          else {
+            for(let s in this.sounds) {
+              if(this.sounds[s] === index) {
+                if(this.sounds[s].isPlaying()) return true;
+                else return false;
+              }
+            }
+          }
         }
         else {
           for(let sound in this.sounds) {
@@ -103,6 +170,245 @@ namespace Oblask {
           }
           return false;
         }
+      }
+                
+      setTimer(time: number, loop: boolean, action: string, ...args) {
+        if(this.canLoop) this.timer++;
+        
+        if(this.timer >= time) {
+          this.timer = 0;
+          if(this.actions.indexOf(action) <= -1) {
+            new Oblask.System.Error("this action doesn't exist \""+action+"\"", "Action Error", true);
+          }
+          
+          if(!loop) this.canLoop = false;
+          
+          for(let act in this.actions) {
+            if(this.actions[act] === action) {
+              this[action](args[0]);
+            }
+            
+          }
+        }
+      }
+    
+      replay(index: number, timer?: number) {
+        if(this.isPlaying(index)) {
+          this.timer+=1/60;
+          
+          if(this.timer >= timer) {
+            this.stop(index);
+            this.play(index, true);
+            
+            this.timer = 0;
+          }
+        }
+        else {
+          if(timer == null) {
+            this.play(index, true);
+          }
+          else {
+            this.play(index, true);
+            
+            this.timer+=1/60;
+            if(this.timer >= timer) {
+              this.stop(index);
+              this.play(index, true);
+              
+              this.timer = 0;
+            }
+          }
+        }
+      }
+    
+      setVolume(value: number, index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            this.sounds[sound].setVolume(value);
+          }
+        }
+        else {
+          this.sounds[index].setVolume(value);
+        }
+      }
+    
+      getVolume(index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            volumes.push(this.sounds[sound].getVolume());
+          }
+        }
+        else {
+          return this.sounds[index].getVolume();
+        }
+      }
+    
+      setPan(value: number, index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            this.sounds[sound].setPan(value);
+          }
+        }
+        else {
+          this.sounds[index].setPan(value);
+        }
+      }
+    
+      getPan(index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            volumes.push(this.sounds[sound].getPan());
+          }
+        }
+        else {
+          return this.sounds[index].getPan();
+        }
+      }
+    
+      setPitch(value: number, index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            this.sounds[sound].setPitch(value);
+          }
+        }
+        else {
+          this.sounds[index].setPitch(value);
+        }
+      }
+    
+      getPitch(index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            volumes.push(this.sounds[sound].getPitch());
+          }
+        }
+        else {
+          return this.sounds[index].getPitch();
+        }
+      }
+      
+      setLoop(value: boolean, index?: number) {
+        if(!index) {
+          let volumes = [];
+          for(let sound in this.sounds) {
+            this.sounds[sound].setLoop(value);
+          }
+        }
+        else {
+          this.sounds[index].setLoop(value);
+        }
+      }
+    
+      setState(index?: number) {
+
+       }
+    
+      getState(index?: number) {
+        
+      }
+    
+      getPath(index?: number): string | string[] {
+        if(index == null) {
+          return this.paths;
+        }
+        else {
+          return this.paths[index];
+        }
+      }
+  
+      getAllowMultiple() {
+        return this.allowMultiple;
+      }
+  
+      enableAllowMultiple() {
+        this.allowMultiple = true;
+        this.format();
+      }
+  
+      disableAllowMultiple(restore?: boolean) {
+        this.allowMultiple = false;
+                           
+        if(restore) {
+          this.paths = this.backup["paths"];
+          this.sounds = this.backup["sounds"];
+        }
+      }
+      
+      private format() {
+        this.backup["paths"] = this.paths;
+        this.backup["sounds"] = this.sounds;
+                           
+        for(let sound in this.paths) {
+          let index = this.getIndex(this.paths[sound]);
+          if(typeof index === "string") {
+            continue;
+          }
+          else {
+            let increment = 0;
+            for(let i = index.length-1; i >= 0; i++) {
+              if(increment > index.length-1) {
+                this.paths.splice(i, 1);
+                this.sounds.splice(i, 1);
+              }
+              increment++;
+            }
+          }
+        }
+      }
+    
+      getIndex(sound : string) {
+        let index = [];
+
+        for(let s in this.sounds) {
+          if(this.paths[s] === sound) {
+            index.push(+s);
+          }
+        }
+        
+        if(index.length == 1) {
+          return index[0];
+        }
+        return index;
+      }
+    
+      getSounds() {
+        return this.sounds;
+      }
+    
+      private checkExistSound() {
+        let index = [];
+        for(let sound in this.paths) {
+          if(!Sup.get(this.paths[sound])) {
+            Sup.log("Error: this sound doesn't exist");
+            this.sounds[sound] == null;
+            index.push(sound);
+          }
+        }
+        return index;
+      }
+    
+      checkDouble() {
+        let double = [];
+        for(let path in this.paths) {
+          let index = this.getIndex(this.paths[path]);
+          
+          if(typeof index !== "number") {
+            let i = index.toString();
+            if(double.indexOf(i) == -1) double.push(i);
+          }
+        }
+        
+        for(let i in double) {
+          double[i] = JSON.parse("["+double[i]+"]");
+        }
+        
+        return double;
       }
     }
   }
