@@ -247,7 +247,6 @@ namespace Oblask {
     
       setPan(value: number, index?: number) {
         if(!index) {
-          let volumes = [];
           for(let sound in this.sounds) {
             this.sounds[sound].setPan(value);
           }
@@ -259,9 +258,9 @@ namespace Oblask {
     
       getPan(index?: number) {
         if(!index) {
-          let volumes = [];
+          let panes = [];
           for(let sound in this.sounds) {
-            volumes.push(this.sounds[sound].getPan());
+            panes.push(this.sounds[sound].getPan());
           }
         }
         else {
@@ -271,7 +270,6 @@ namespace Oblask {
     
       setPitch(value: number, index?: number) {
         if(!index) {
-          let volumes = [];
           for(let sound in this.sounds) {
             this.sounds[sound].setPitch(value);
           }
@@ -283,9 +281,9 @@ namespace Oblask {
     
       getPitch(index?: number) {
         if(!index) {
-          let volumes = [];
+          let pitches = [];
           for(let sound in this.sounds) {
-            volumes.push(this.sounds[sound].getPitch());
+            pitches.push(this.sounds[sound].getPitch());
           }
         }
         else {
@@ -295,7 +293,6 @@ namespace Oblask {
       
       setLoop(value: boolean, index?: number) {
         if(!index) {
-          let volumes = [];
           for(let sound in this.sounds) {
             this.sounds[sound].setLoop(value);
           }
@@ -304,13 +301,17 @@ namespace Oblask {
           this.sounds[index].setLoop(value);
         }
       }
-    
-      setState(index?: number) {
-
-       }
-    
+      
       getState(index?: number) {
-        
+        if(!index) {
+          let states = [];
+          for(let sound in this.sounds) {
+            states.push(this.sounds[sound].getState());
+          }
+        }
+        else {
+          return this.sounds[index].getPitch();
+        }
       }
     
       getPath(index?: number): string | string[] {
