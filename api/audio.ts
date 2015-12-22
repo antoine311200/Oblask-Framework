@@ -302,12 +302,13 @@ namespace Oblask {
         }
       }
       
-      getState(index?: number) {
+      getState(index?: number): Sup.Audio.SoundPlayer.State | Sup.Audio.SoundPlayer.State[] {
         if(!index) {
           let states = [];
           for(let sound in this.sounds) {
             states.push(this.sounds[sound].getState());
           }
+          return states;
         }
         else {
           return this.sounds[index].getPitch();
@@ -327,13 +328,13 @@ namespace Oblask {
         return this.allowMultiple;
       }
   
-      enableAllowMultiple() {
-        this.allowMultiple = true;
+      disableMultiple() {
+        this.allowMultiple = false;
         this.format();
       }
   
-      disableAllowMultiple(restore?: boolean) {
-        this.allowMultiple = false;
+      enableMultiple(restore?: boolean) {
+        this.allowMultiple = true;
                            
         if(restore) {
           this.paths = this.backup["paths"];
