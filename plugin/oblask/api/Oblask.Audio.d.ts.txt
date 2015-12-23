@@ -1,0 +1,37 @@
+declare namespace Oblask {
+  namespace Audio {
+    class Playlist {
+      constructor(sounds: string[], multiple?: boolean);
+      
+      play(index: any, loop?: boolean);
+      pause(index?: number);
+      stop(index?: number);
+      playAll();
+      replay(index: number, timer?: number);
+
+      add(sound: string);
+      replace(sound: string, index: number);
+      remove(index: number);
+      removeAll();
+
+      isPlaying(index?: string);
+      getIndex(sound: string);
+
+      setVolume(value: number, index?: number);
+      getVolume(index?: number);
+      setPan(value: number, index?: number);
+      getPan(index?: number);
+      setPitch(value: number, index?: number);
+      getPitch(index?: number);
+      setLoop(value: boolean, index?: number);
+      getPath(index?: number): string | string[];
+      getState(index?: number): Sup.Audio.SoundPlayer.State | Sup.Audio.SoundPlayer.State[];
+      getSounds();
+      
+      getMultiple();
+      disableMultiple();
+      enableMultiple();
+      checkDouble();
+    }
+  }
+}
