@@ -26,5 +26,5 @@ class SetupBehavior extends Sup.Behavior {
       playlist.play([1, 2], true));
     }
   }
-  
 }
+Sup.registerBehavior(SetupBehavior);
