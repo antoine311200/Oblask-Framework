@@ -103,11 +103,11 @@ namespace Oblask {
         super(value);
         if(typeof this.value === "number") this.value = String.fromCharCode(<number>this.value);  
         try {
-          if((<string>this.value).length > 1) throw new LengthError();
+          if((<string>this.value).length > 1) throw new Oblask.System.Error((<string>this.value).length+' instead of 1', "LenghtError");
         }
         catch(e) {
-          if(e instanceof LengthError) {
-           console.error('Length Error : '+(<string>this.value).length+' instead of 1');
+          if(e instanceof Error) {
+           return;
           }
         }
         Oblask.Current.Char.push(this);
