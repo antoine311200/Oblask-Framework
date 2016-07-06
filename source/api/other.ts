@@ -1,9 +1,28 @@
+let cos = Math.cos;
+let sin = Math.sin;
+let tan = Math.tan;
+let pi = Math.PI;
+
+function search(array: any[] | {[key: string]: any}, propertie: string, element: any, return_: string) {
+  if(array instanceof Object) {
+    for(let key in array) {
+      if(array[key][propertie] == element) return (return_ == "id") ? key : (return_ != null) ? array[key][propertie] : array[key];
+    }
+  }
+  else {
+    for(let i = 0; i <= (<any[]>array).length; i++) {
+      if(array[i][propertie] == element) return (return_ == "id") ? i : (return_ != null) ? array[i][propertie] : array[i];
+    }
+  }
+  return null;
+}
+
+
 /*
  * Polyfill of Object.prototype.watch & Object.prototype.unwatch taken on the web ^^
  * Because deprecated and not recommanded on the browsers.
  */
- 
- 
+
 if (!Object.prototype["watch"]) {
 	Object.defineProperty(Object.prototype, "watch", {
     enumerable: false,
