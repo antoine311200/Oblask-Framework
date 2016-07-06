@@ -1,6 +1,126 @@
 namespace Oblask{
   export namespace Input {
     
+    export enum Mouse {
+      Left,
+      Middle,
+      Right,
+      ScrollUp = 5,
+      ScrollDown
+    }
+    
+    export enum GamepadButtons {
+      A,
+      B,
+      X,
+      Y,
+      LeftShoulder,
+      RightShoulder,
+      LeftTrigger,
+      RightTrigger,
+      Back,
+      Start,
+      LeftAxis,
+      RightAxis,
+      Up,
+      Down,
+      Left,
+      Right,
+      Xbox
+    }
+    
+    export enum GamepadAxis {
+      LeftAxisX,
+      LeftAxisY,
+      RightAxisX,
+      RigthAxisY
+    }
+    
+    export enum Keys {
+      ZERO, ONE, TWO, THREE, FOUR, FIVE, SEVEN, HEIGHT, NINE, 
+      A,Z,E,R,T,Y,U,I,O,P,Q,S,D,F,G,H,J,K,L,M,W,X,C,V,B,N,
+      CANCEL, HELP, BACK_SPACE, TAB, CLEAR, RETURN, SHIFT, CONTROL, ALT,
+      PAUSE, CAPS_LOCK, ESCAPE, SPACE, PAGE_UP, PAGE_DOWN, END, HOME,
+      LEFT, UP, RIGHT, DOWN, PRINTSCREEN, INSERT, DELETE,
+      SEMICOLON, EQUALS,     
+      CONTEXT_MENU, NUMPAD0, NUMPAD1, NUMPAD2, NUMPAD3, NUMPAD4, NUMPAD5, NUMPAD6, NUMPAD7, NUMPAD8 ,NUMPAD9,
+      MULTIPLY, ADD, SEPARATOR, SUBTRACT, DECIMAL, DIVIDE,
+      F1, F2 ,F3 ,F4 ,F5 ,F6 ,F7 ,F8 ,F9 ,F10, F11 ,F12 ,F13 ,F14 ,F15 ,F16 ,F17 ,F18 ,F19 ,F20 ,F21 ,F22 ,F23, F24, NUM_LOCK, SCROLL_LOCK, COMMA, PERIOD, SLASH, BACK_QUOTE,
+      OPEN_BRACKET, BACK_SLASH, CLOSE_BRACKET, QUOTE, META
+    }
+    
+    export function keysDown(...keys: any[]): boolean {
+      const values: boolean[] = [];
+      if(typeof keys[0][0] == "number") {
+        for(let i = 0; i < keys[0].length; i++) {
+          values[i] = Sup.Input.isKeyDown(Keys[keys[0][i]]);
+        }
+      }
+      else {
+        for(let i = 0; i < keys.length; i++) {
+          values[i] = Sup.Input.isKeyDown(Keys[keys[i]]);
+        }
+      }
+      return values.every(elem => elem === true);
+    }
+    
+    export function keysPressed(...keys: any[]): boolean {
+      const values: boolean[] = [];
+      if(typeof keys[0][0] == "number") {
+        for(let i = 0; i < keys[0].length; i++) {
+          values[i] = Sup.Input.wasKeyJustPressed(Keys[keys[0][i]]);
+        }
+      }
+      else {
+        for(let i = 0; i < keys.length; i++) {
+          values[i] = Sup.Input.wasKeyJustPressed(Keys[keys[i]]);
+        }
+      }
+      return values.every(elem => elem === true);
+    }
+    
+    export function keysReleased(...keys: any[]): boolean {
+      const values: boolean[] = [];
+      if(typeof keys[0][0] == "number") {
+        for(let i = 0; i < keys[0].length; i++) {
+          values[i] = Sup.Input.wasKeyJustReleased(Keys[keys[0][i]]);
+        }
+      }
+      else {
+        for(let i = 0; i < keys.length; i++) {
+          values[i] = Sup.Input.wasKeyJustReleased(Keys[keys[i]]);
+        }
+      }
+      return values.every(elem => elem === true);
+    }
+    
+    export function isMouseButtonDown(index: Mouse) {
+      return Sup.Input.isMouseButtonDown(index);
+    }
+    
+    export function wasMouseButtonJustPressed(index: Mouse) {
+      return Sup.Input.wasMouseButtonJustPressed(index);
+    }
+    
+    export function wasMouseButtonJustReleased(index: Mouse) {
+      return Sup.Input.wasMouseButtonJustReleased(index);
+    }
+    
+    export function isGamepadButtonDown(gamepad: number, index: GamepadButtons) {
+      return Sup.Input.isGamepadButtonDown(gamepad, index);
+    }
+    
+    export function wasGamepadButtonJustPressed(gamepad: number, index: GamepadButtons) {
+      return Sup.Input.wasGamepadButtonJustPressed(gamepad, index);
+    }
+    
+    export function getGamepadButtonValue(gamepad: number, index: GamepadButtons) {
+      return Sup.Input.getGamepadButtonValue(gamepad, index);
+    }
+    export function getGamepadAxisValue(gamepad: number, index: GamepadAxis) {
+      return Sup.Input.getGamepadAxisValue(gamepad, index);
+    }
+    
     export class Key {
       
       key: string;
