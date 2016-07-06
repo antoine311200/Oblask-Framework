@@ -18,7 +18,7 @@ namespace Oblask {
         throw(new SyntaxError(message));
       }
       else {
-        Sup.log("%c"+message, "color: red; background: rgb(255, 210, 210)");
+        console.error(message); //, Sup.log("%c"+message,"color: red; background: rgb(255, 210, 210)");
       }
     }
     
@@ -34,12 +34,20 @@ namespace Oblask {
       
     }
     
-    export class Error {
+    export abstract class ErrorClass implements Error {
+      public name: string;
+      public type: string;
+      public message: string;
+      constructor(message?: string) {this.message = message};
+    }
+    
+    export class Error extends ErrorClass {
       
       message: string;
       type: string;
       
       constructor(message: string, type?: string, allowInfo?: boolean) {
+        super();
         this.message = message;
         this.type = type;
         
@@ -51,13 +59,15 @@ namespace Oblask {
     export enum ErrorType {
       Action,
       Type,
-      Syntax
+      Syntax,
+      Length
     }
   
     export var ErrorDescription = [
       "→ check you have input a existing action in your method Oblask.Audio.Playlist.setTimer",
       "type",
-      "syntax"
+      "syntax",
+      "not great length"
     ];
     
     export class Warn {
@@ -69,17 +79,14 @@ namespace Oblask {
       
       constructor(message: string) {
         this.message = message;
-        
         Oblask.System.info(this.message);
       }
   
       static setErrorInfo(type: string) {
         let ty = type.substring(0, type.indexOf(" Error"));
-        for(let i in ErrorType) {
-          if(ErrorType[i] == ty) {
+        for(let i in ErrorType)
+          if(ErrorType[i] == ty)
             new Oblask.System.Info(ErrorDescription[i])
-          }
-        }
       }
     }
 
